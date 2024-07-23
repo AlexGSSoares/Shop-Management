@@ -1,9 +1,8 @@
 ___________________________________________________
 
 # STORE MANAGEMENT 
-This programme uses JAVA (object-oriented programming paradigm) as the Frontend, OCAML (functional programming paradigm) and Prolog (logic programming paradigm) as the Backend.
+This programme uses JAVA (object-oriented programming paradigm) as the Frontend, OCAML (functional programming paradigm) and Prolog (logic programming paradigm) as the Backend, and it is still a work in progress
 
-The main class is "Main.java", where has all the main menu, and the sub-menus. Every step then calls the respective class, with the same name.
 ____________________________________
 ## PREREQUISITES 
 
