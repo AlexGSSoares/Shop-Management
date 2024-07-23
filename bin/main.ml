@@ -1,5 +1,6 @@
 open Str
 
+(* Parsing functions *)
 let read_file filename =
   let lines = ref [] in
   let channel = open_in filename in
@@ -53,16 +54,12 @@ let () =
 
 
  (**********************************************************)
- (***************          EFOLIO A         ****************)
- (**********      Linguagens de Programação      ***********)
  (**********************************************************)
- (***********    Professor: RICARDO BAPTISTA     ***********)
- (***********   Monitor: RÚDI GUALTER OLIVEIRA   ***********)
- (************     Aluno: Alexandre Soares      ************)
- (*************      Nr de Aluno: 2101521      *************)
+ (************** Shop Management functions *****************)
+ (**********************************************************)
  (**********************************************************)
 
-(* Função para converter a string do carrinho numa lista de itens *)
+(* Function to convert the cart string into a list of items *)
 let parse_cart_items cart_str =
   Str.split (Str.regexp ",") cart_str |> List.map (fun item_str ->
     match Str.split (Str.regexp ";") item_str with
@@ -70,26 +67,26 @@ let parse_cart_items cart_str =
         (int_of_string id, name, category, float_of_string price, int_of_string quantity)
     | _ -> failwith "Invalid item format")
 
-(* Função para calcular o preço total do carrinho sem descontos *)
+(* Function to calculate the total price of the cart without discounts *)
 let calculate_cart_total cart_items =
   List.fold_left (fun acc (_, _, _, price, quantity) ->
     acc +. (price *. float_of_int quantity)
   ) 0.0 cart_items
 
-(* Função para calcular os descontos por categoria nos itens do carrinho *)
+(* Function to calculate category discounts on cart items *)
 let calculate_discounts_category cart_items =
   let file_lines = read_file "store.pl" in
   let discounts = List.filter_map parse_discount file_lines in
   List.fold_left (fun acc (_, _, category, price, quantity) ->
     let discount_rate = match List.find_opt (fun (cat, _) -> cat = category) discounts with
     | Some (_, rate) -> rate
-    | None -> 0.0  (* Não aplica desconto se a categoria não for encontrada *)
+    | None -> 0.0  (* No discount if the category is not found *)
     in
     let discount_amount = price *. discount_rate *. float_of_int quantity in
     acc +. discount_amount
   ) 0.0 cart_items
 
-(* Função para calcular o desconto de lealdade com base nos anos de fidelidade do cliente *)
+(* Function to calculate the loyalty discount based on the customer's years of loyalty *)
 let calculate_loyalty_discount years total_amount =
   let file_lines = read_file "store.pl" in
   let loyalty_discounts = List.filter_map parse_loyalty_discount file_lines in
@@ -103,17 +100,17 @@ let calculate_loyalty_discount years total_amount =
   in
   total_amount *. discount_rate
 
-(* Função para calcular o custo de envio com base no distrito *)
+(* Function to calculate the shipping cost based on the district *)
 let calculate_shipping_cost district =
   let file_lines = read_file "store.pl" in
   let shipping_costs = List.filter_map parse_shipping_cost file_lines in
   match List.find_opt (fun (d, _) -> d = district) shipping_costs with
   | Some (_, cost) -> cost
-  | None -> (* retorna um valor padrão ou envia uma mensagem de erro *)
+  | None -> (* returns a default value or sends an error message *)
     Printf.printf "Warning: District '%s' not found, applying default shipping cost of 0.0\n" district;
     0.0
 
-(* Função para calcular o preço final do carrinho *)
+(* Function to calculate the final price of the cart *)
 let calculate_final_cart_price cart_str years_of_loyalty district =
   let cart_items = parse_cart_items cart_str in
   let total_price = calculate_cart_total cart_items in
@@ -125,13 +122,13 @@ let calculate_final_cart_price cart_str years_of_loyalty district =
   let final_price = price_after_all_discounts +. shipping_cost in
   max final_price 0.0
 
-(* Função para comparar dois itens primeiro por categoria e depois pelo nome do item *)
+(* Function to compare two items first by category and then by item name *)
 let compare_items (_, name1, category1, _, _) (_, name2, category2, _, _) =
   match String.compare category1 category2 with
-  | 0 -> String.compare name1 name2  (* Se as categorias são iguais, compara pelo nome *)
-  | c -> c  (* Caso contrário, compara pela categoria *)
+  | 0 -> String.compare name1 name2  (* If the categories are the same, compare by name *)
+  | c -> c  (* Otherwise, compare by category *)
 
-(* Função para ordenar e exibir o carrinho de compras *)
+(* Function to sort and display the shopping cart *)
 let display_cart cart_str =
   let cart_items = parse_cart_items cart_str in
   let sorted_items = List.sort compare_items cart_items in
@@ -139,7 +136,7 @@ let display_cart cart_str =
     Printf.printf "Sorted Item: %s, Category: %s, Price: %.2f, Quantity: %d\n" name category price quantity
   ) sorted_items
 
-(* Execução *)
+(* Execution *)
 let main () =
   let args = Sys.argv in
   if Array.length args <> 4 then
@@ -156,7 +153,7 @@ let main () =
     let total_discount_category = calculate_discounts_category cart_items in
     Printf.printf "Total discount from categories: %f\n" total_discount_category;
 
-    (* Retirar o valor do desconto de categoia ao valor total sem desconto*)
+    (* Subtract the category discount from the total price without discount *)
     let total_amount_after_category_discounts = total_price -. total_discount_category in
     let loyalty_discount = calculate_loyalty_discount (years_of_loyalty) total_amount_after_category_discounts in
     Printf.printf "Loyalty discount for years of loyalty: %f\n"  loyalty_discount;
