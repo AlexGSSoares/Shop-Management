@@ -1,0 +1,7 @@
+(executable
+ (public_name Shop_Management)
+ (name main)
+ (libraries Shop_Management str))
+(env
+ (dev
+  (flags (:standard -w -32 -w -33))))

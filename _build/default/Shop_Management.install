@@ -1,0 +1,11 @@
+lib: [
+  "_build/install/default/lib/Shop_Management/META"
+  "_build/install/default/lib/Shop_Management/dune-package"
+  "_build/install/default/lib/Shop_Management/opam"
+]
+bin: [
+  "_build/install/default/bin/Shop_Management"
+]
+doc: [
+  "_build/install/default/doc/Shop_Management/README.md"
+]

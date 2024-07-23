@@ -1,0 +1,7 @@
+(lang dune 3.15)
+(name Shop_Management)
+(sections (lib .) (bin ../../bin) (doc ../../doc/Shop_Management))
+(files
+ (lib (META dune-package opam))
+ (bin (Shop_Management))
+ (doc (README.md)))
